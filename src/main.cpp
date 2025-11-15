@@ -33,7 +33,10 @@ struct TX_Data
   float batttery;
 };
 */
-
+ int tred()
+ {
+  
+ }
 
 void setup()
 {
