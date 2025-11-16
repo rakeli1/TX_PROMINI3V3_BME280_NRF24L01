@@ -70,7 +70,7 @@ void loop()
   paket.pressure    = bme.readPressure();
   }
 
-  bool ok = radio.write(&dataSensor, sizeof(dataSensor));
+  bool ok = radio.write(&paket, sizeof(paket));
 
   Serial.println("I SENT: ");
 
