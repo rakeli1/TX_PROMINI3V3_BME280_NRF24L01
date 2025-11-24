@@ -5,7 +5,7 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 #include "LowPower.h"
-#define DEBUG 1 // set to 0 to disable Serial prints and debug delays (useful for release)
+#define DEBUG 1 //  1 включена только на время отладки . 0 Это для отключения всех Serial выводов и строк которые выводят информацию во время отладки
 #define CE_PIN 9               // Номер пина на ардуинке на котором создается модуль "radio"
 #define CSN_PIN 10             // Номер пина на ардуинке на котором создается модуль "radio"
 
@@ -46,7 +46,7 @@ int counter = 0;
 
 void arduinoSleep30min()    // функция усыпляющая ардуинку в данном случае на 64 секунды(в рабочем варианте 30 мин)
 {
-  // 225 * 8s = 1800s = 30 minutes
+  // 225 * 8s = 1800s = 30 минут
   for (int a = 0; a < 225; ++a) {
     LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
   }
@@ -176,7 +176,7 @@ void loop()
   Serial.println();                                                                                            // ОТЛАДКА
   delay(3000); // debug pause
 #else
-  // minimal pause to let radio settle; in release builds avoid long blocking delays
+  delay(5); // минимальная пауза чтобы радиомодуль успел закончить свои внутрение операции
 #endif
 
 
