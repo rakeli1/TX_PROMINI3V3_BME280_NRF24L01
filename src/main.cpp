@@ -5,6 +5,7 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 #include "LowPower.h"
+#define DEBUG 1 // set to 0 to disable Serial prints and debug delays (useful for release)
 #define CE_PIN 9               // Номер пина на ардуинке на котором создается модуль "radio"
 #define CSN_PIN 10             // Номер пина на ардуинке на котором создается модуль "radio"
 
@@ -45,8 +46,8 @@ int counter = 0;
 
 void arduinoSleep30min()    // функция усыпляющая ардуинку в данном случае на 64 секунды(в рабочем варианте 30 мин)
 {
-  for(int a = 0; a < 1; a++)
-  {
+  // 225 * 8s = 1800s = 30 minutes
+  for (int a = 0; a < 225; ++a) {
     LowPower.powerDown(SLEEP_8S, ADC_OFF, BOD_OFF);
   }
 }
@@ -55,7 +56,9 @@ bool firstStart = true;    // переменная которая в опера�
                                                                               // Ардуинки
 void setup()
 {
-  Serial.begin(9600);         // открываем порт для связи с ПК
+#if DEBUG
+  Serial.begin(9600);         // открываем порт для связи с ПК (только для отладки)
+#endif
   
   analogReference(INTERNAL); // подключение к внутреннему опорному напряжению 1,1 в на пин А0
                             // подключать не более 1,1 в ВАЖНО!!!!
@@ -115,19 +118,18 @@ void loop()
   
   
   radio.powerUp();                                       // пробуждаем радиомодуль
-  delay(5);
   bool ok = radio.write(&tx_data, sizeof(tx_data));      // ОТЛАДКА
   //radio.write(&counter, sizeof(counter));
-  delay(5);
   radio.powerDown();                                     // переводим радиомодуль в спящий режим
-
+  // Debug prints and delay are enabled only when DEBUG == 1
+#if DEBUG
   Serial.println("I SENT: ");                            // ОТЛАДКА
 
   Serial.print("Sent: ");                                // ОТЛАДКА
   Serial.println(counter);                               // ОТЛАДКА            
   counter++;
 
-   // температура
+  // температура
   Serial.print("Temperature: ");                          // ОТЛАДКА
   Serial.println(tx_data[TEMPERATURE]);                      // ОТЛАДКА
   
@@ -172,7 +174,11 @@ void loop()
   }                                                                                                            // ОТЛАДКА
 
   Serial.println();                                                                                            // ОТЛАДКА
-  delay(3000); 
+  delay(3000); // debug pause
+#else
+  // minimal pause to let radio settle; in release builds avoid long blocking delays
+#endif
+
 
   firstStart = false;                                   // этой переменной мы разрещаем запуск спящего режима в следующих циклах за первым
 
